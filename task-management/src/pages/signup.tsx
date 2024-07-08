@@ -5,6 +5,7 @@ import { FaLock } from "react-icons/fa";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
 const SignupSchema = z
   .object({
@@ -30,6 +31,8 @@ const SignupSchema = z
 type SignupFormData = z.infer<typeof SignupSchema>;
 
 export default function Signup() {
+  const [loading, setLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const {
     register,
     handleSubmit,
@@ -38,8 +41,16 @@ export default function Signup() {
     resolver: zodResolver(SignupSchema),
   });
 
-  const createUser = (data: any) => {
-    console.log(data);
+  const createUser = (): Promise<string> => {
+    setLoading(true);
+    setIsDisabled(true);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve("Login successful");
+        setLoading(false);
+        setIsDisabled(false);
+      }, 2000);
+    });
   };
 
   return (
@@ -89,7 +100,7 @@ export default function Signup() {
             )}
 
             <Input
-              label="Password"
+              label="Confirm Password"
               type="password"
               placeholder="Confirm your password"
               icon={FaLock}
@@ -103,7 +114,12 @@ export default function Signup() {
               </span>
             )}
 
-            <Button label="Sign Up" type="submit" />
+            <Button
+              label="Sign Up"
+              type="submit"
+              progress={loading}
+              isDisabled={isDisabled}
+            />
 
             <span className="text-zinc-100">
               Already have an account?{" "}
