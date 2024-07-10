@@ -1,9 +1,13 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { styled } from "@mui/material/styles";
+
+interface ResponsiveDatePickersProps {
+  onChange: (newValue: Dayjs | null) => void;
+}
 
 const CustomDatePicker = styled(DatePicker)(() => ({
   "& .MuiInputBase-root": {
@@ -31,7 +35,9 @@ const CustomDatePicker = styled(DatePicker)(() => ({
   },
 }));
 
-export default function ResponsiveDatePickers() {
+export default function ResponsiveDatePickers(
+  props: ResponsiveDatePickersProps,
+) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer
@@ -44,7 +50,10 @@ export default function ResponsiveDatePickers() {
         ]}
       >
         <DemoItem>
-          <CustomDatePicker defaultValue={dayjs()} />
+          <CustomDatePicker
+            defaultValue={dayjs()}
+            onChange={(newValue) => props.onChange(newValue)}
+          />
         </DemoItem>
       </DemoContainer>
     </LocalizationProvider>
