@@ -4,9 +4,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { styled } from "@mui/material/styles";
+import { Control, Controller } from "react-hook-form";
+import { formattedDateStringToDate } from "../helper/formattedDate";
 
 interface ResponsiveDatePickersProps {
-  onChange: (newValue: Dayjs | null) => void;
+  onChange?: (newValue: Dayjs | null) => void;
+  control?: Control<any>;
+  defaultValue?: string;
 }
 
 const CustomDatePicker = styled(DatePicker)(() => ({
@@ -14,7 +18,7 @@ const CustomDatePicker = styled(DatePicker)(() => ({
     fontSize: "0.875rem",
     color: "#fff",
     padding: "0 8px",
-    width: "200px",
+    width: "100%",
     height: "42px",
     overflow: "hidden",
     "& .MuiOutlinedInput-notchedOutline": {
@@ -38,6 +42,14 @@ const CustomDatePicker = styled(DatePicker)(() => ({
 export default function ResponsiveDatePickers(
   props: ResponsiveDatePickersProps,
 ) {
+  const { onChange, control, defaultValue } = props;
+
+  const handleChange = (newValue: Dayjs | null) => {
+    if (onChange) {
+      onChange(newValue);
+    }
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer
@@ -50,10 +62,29 @@ export default function ResponsiveDatePickers(
         ]}
       >
         <DemoItem>
-          <CustomDatePicker
-            defaultValue={dayjs()}
-            onChange={(newValue) => props.onChange(newValue)}
-          />
+          {control ? (
+            <Controller
+              name="date"
+              control={control}
+              render={({ field }) => (
+                <CustomDatePicker
+                  {...field}
+                  defaultValue={
+                    defaultValue
+                      ? dayjs(formattedDateStringToDate(defaultValue))
+                      : null
+                  }
+                  onChange={(date) => {
+                    const formattedDate = dayjs(date).toDate();
+                    field.onChange(formattedDate);
+                  }}
+                  value={field.value ? dayjs(field.value) : null}
+                />
+              )}
+            />
+          ) : (
+            <CustomDatePicker onChange={handleChange} />
+          )}
         </DemoItem>
       </DemoContainer>
     </LocalizationProvider>

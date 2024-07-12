@@ -8,6 +8,7 @@ interface InputProps {
   icon: IconType;
   register: UseFormRegister<any>;
   name: string;
+  value?: string;
 }
 
 export default function Input(props: InputProps) {
@@ -16,6 +17,7 @@ export default function Input(props: InputProps) {
       <label>{props.label}</label>
       <div className="relative">
         <input
+          value={props.value}
           type={props.type}
           placeholder={props.placeholder}
           {...props.register(props.name)}
