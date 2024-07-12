@@ -3,6 +3,8 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { MdDelete, MdEdit, MdMoreVert } from "react-icons/md";
+import DialogComponent from "./dialog";
+import DeleteDialogComponent from "./deleteDialog";
 
 const options = [
   {
@@ -17,13 +19,25 @@ const options = [
 
 const ITEM_HEIGHT = 48;
 
-export default function MenuOptionButton() {
+interface IMenuOptionButton {
+  taskId: number;
+}
+
+export default function MenuOptionButton(props: IMenuOptionButton) {
+  const [editDialogOpen, setEditDialogOpen] = React.useState<boolean>(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] =
+    React.useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = (option: string) => {
+    if (option === "delete") {
+      setDeleteDialogOpen(true);
+    } else if (option === "edit") {
+      setEditDialogOpen(true);
+    }
     setAnchorEl(null);
   };
 
@@ -62,13 +76,27 @@ export default function MenuOptionButton() {
               fontWeight: 500,
             }}
             key={option.name}
-            onClick={handleClose}
+            onClick={() => handleClose(option.name)}
           >
             {option.name.charAt(0).toUpperCase() + option.name.slice(1)}
             {option.icon}
           </MenuItem>
         ))}
       </Menu>
+
+      {editDialogOpen && (
+        <DialogComponent
+          taskId={props.taskId}
+          onClose={() => setEditDialogOpen(false)}
+        />
+      )}
+
+      {deleteDialogOpen && (
+        <DeleteDialogComponent
+          taskId={props.taskId}
+          onClose={() => setDeleteDialogOpen(false)}
+        />
+      )}
     </div>
   );
 }
