@@ -89,7 +89,7 @@ const FormTaskComponent = forwardRef((props: FormTaskComponentProps, ref) => {
         )}
       </div>
 
-      <div className="flex w-full justify-between">
+      <div className="w-ful flex flex-col justify-between lg:flex-row">
         <div className="flex flex-col">
           <TimePickerComponent
             name="start_time"

@@ -64,7 +64,24 @@ export default function DeleteDialogComponent(
       >
         <MdClose color="#f1f1f1" />
       </IconButton>
-      <DialogContent dividers sx={{ marginTop: "24px", width: "340px" }}>
+      <DialogContent
+        dividers
+        sx={{
+          marginTop: "24px",
+          width: {
+            xs: "100%",
+            sm: "100%",
+            md: "100%",
+            lg: "440px",
+            xl: "520px",
+          },
+          maxWidth: {
+            xs: "300px",
+            sm: "400px",
+            md: " 420px",
+          },
+        }}
+      >
         <h2 className="text-lg font-semibold">Are you sure?</h2>
         <p className="mt-2 text-base">
           Do you really want to delete this task? This process cannot be undone.

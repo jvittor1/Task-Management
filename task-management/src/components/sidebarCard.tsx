@@ -7,7 +7,8 @@ interface SideBarCardProps {
   checkable?: boolean;
   onClick?: (data: string) => void;
   selected?: boolean;
-  checked?: (data: string) => void;
+  handleCheck?: (data: string) => void;
+  checked?: boolean;
 }
 export default function SideBarCard(props: SideBarCardProps) {
   return (
@@ -28,7 +29,10 @@ export default function SideBarCard(props: SideBarCardProps) {
                 color: "#4f46e5",
               },
             }}
-            onChange={() => (props.checked ? props.checked(props.name) : null)}
+            checked={props.checked ? props.checked : false}
+            onChange={() =>
+              props.handleCheck ? props.handleCheck(props.name) : null
+            }
           />
         )}
 

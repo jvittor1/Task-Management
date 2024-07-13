@@ -7,7 +7,7 @@ import { ITask } from "../interfaces/task";
 export default function CardList(props: ITask) {
   return (
     <div className="ease-in-ou flex w-full cursor-pointer items-center justify-between rounded-md bg-zinc-950 px-2 py-3 text-zinc-300 shadow shadow-zinc-900 transition duration-150 hover:bg-zinc-800">
-      <div className="flex items-center justify-center gap-2 text-base font-semibold">
+      <div className="flex items-center justify-center gap-2 text-sm font-semibold lg:text-base">
         {
           <Checkbox
             defaultChecked={props.status === true}
@@ -25,11 +25,11 @@ export default function CardList(props: ITask) {
       </div>
 
       <div className="flex gap-2 text-sm text-zinc-300">
-        <span className="flex items-center justify-center rounded bg-zinc-800 px-2">
+        <span className="hidden items-center justify-center rounded bg-zinc-800 px-2 lg:flex">
           {props.date}
         </span>
 
-        <span className="flex items-center justify-center gap-1 rounded bg-zinc-800 px-2">
+        <span className="hidden items-center justify-center gap-1 rounded bg-zinc-800 px-2 lg:flex">
           {" "}
           <LuClock /> {formatTimeRange(props.startTime, props.endTime)}
         </span>

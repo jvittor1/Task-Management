@@ -30,8 +30,10 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     backgroundColor: "#18181b",
     color: "#f1f1f1",
   },
+  "& .css-oucraa-MuiStack-root > .MuiTextField-root": {
+    minWidth: 0,
+  },
 }));
-
 export default function DialogComponent(props: DialogProps) {
   let taskData;
   if (props.taskId) {
@@ -64,7 +66,19 @@ export default function DialogComponent(props: DialogProps) {
       >
         <MdClose color="#f1f1f1" />
       </IconButton>
-      <DialogContent dividers sx={{ marginTop: "24px", width: "580px" }}>
+      <DialogContent
+        dividers
+        sx={{
+          marginTop: "24px",
+          width: {
+            xs: "100%",
+            sm: "100%",
+            md: "100%",
+            lg: "580px",
+            xl: "580px",
+          },
+        }}
+      >
         {taskData && (
           <FormTaskComponent
             ref={formRef}
