@@ -72,8 +72,8 @@ export default function DialogComponent(props: DialogProps) {
           marginTop: "24px",
           width: {
             xs: "100%",
-            sm: "100%",
-            md: "100%",
+            sm: "440px",
+            md: "440px",
             lg: "580px",
             xl: "580px",
           },
