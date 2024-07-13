@@ -39,10 +39,14 @@ const CustomDatePicker = styled(DatePicker)(() => ({
   },
 }));
 
-export default function ResponsiveDatePickers(
-  props: ResponsiveDatePickersProps,
-) {
-  const { onChange, control, defaultValue } = props;
+export default function ResponsiveDatePickers({
+  onChange,
+  control,
+  defaultValue,
+}: ResponsiveDatePickersProps) {
+  if (defaultValue) {
+    console.log(defaultValue);
+  }
 
   const handleChange = (newValue: Dayjs | null) => {
     if (onChange) {
@@ -66,6 +70,9 @@ export default function ResponsiveDatePickers(
             <Controller
               name="date"
               control={control}
+              defaultValue={
+                defaultValue ? formattedDateStringToDate(defaultValue) : null
+              }
               render={({ field }) => (
                 <CustomDatePicker
                   {...field}

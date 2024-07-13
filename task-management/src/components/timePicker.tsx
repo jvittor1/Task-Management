@@ -42,11 +42,12 @@ export default function TimePickerComponent({
   control,
   name,
   label,
-  defaultValue: defualtValue,
+  defaultValue: defaultValue,
 }: TimePickerComponentProps) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer
+        sx={{ width: "100%" }}
         components={[
           "DatePicker",
           "TimePicker",
@@ -58,21 +59,28 @@ export default function TimePickerComponent({
           <Controller
             name={name}
             control={control}
-            render={({ field }) => (
-              <StyledTimePicker
-                {...field}
-                onChange={(time) => {
-                  const formattedTime = dayjs(time).toDate();
-                  field.onChange(formattedTime);
-                }}
-                value={field.value ? dayjs(field.value) : null}
-                defaultValue={
-                  defualtValue
-                    ? dayjs(formattedStringToDate(defualtValue))
-                    : null
-                }
-              />
-            )}
+            defaultValue={
+              defaultValue ? formattedStringToDate(defaultValue) : undefined
+            }
+            render={({ field }) => {
+              return (
+                <StyledTimePicker
+                  {...field}
+                  onOpen={() => {
+                    console.log(field.value);
+                  }}
+                  onChange={(time) => {
+                    const formattedTime = dayjs(time).toDate();
+                    field.onChange(formattedTime);
+                  }}
+                  value={
+                    defaultValue
+                      ? dayjs(formattedStringToDate(defaultValue))
+                      : undefined
+                  }
+                />
+              );
+            }}
           />
         </DemoItem>
       </DemoContainer>
