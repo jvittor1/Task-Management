@@ -11,6 +11,6 @@ namespace task_management.Dtos
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
         [Compare("Password", ErrorMessage = "Passowords must be equals")]
-        public string PassowordConfirm { get; set; }
+        public string PasswordConfirm { get; set; }
     }
 }

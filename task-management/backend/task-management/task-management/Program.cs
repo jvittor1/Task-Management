@@ -18,7 +18,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserInterface, UserService>();
 builder.Services.AddScoped<IPasswordInterface, PasswordService>();
 builder.Services.AddScoped<ITaskInterface, TaskService>();
-
+builder.Services.AddCors(
+    x =>
+    {
+        x.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+    }
+);
 builder.Services.AddAuthentication(
     options =>
     {
@@ -66,7 +75,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 
