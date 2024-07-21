@@ -39,7 +39,7 @@ const TaskSchema = z
       hour: "2-digit",
       minute: "2-digit",
     }),
-    date: new Date().toLocaleDateString("en-US", {
+    date: data.date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -80,6 +80,7 @@ const FormTaskComponent = forwardRef((props: FormTaskComponentProps, ref) => {
           id: props.taskData!.id,
           status: props.taskData!.status,
         };
+
         const result = await updateTask(taskToUpdate);
         if (result) {
           taskHook.updateTasks();
