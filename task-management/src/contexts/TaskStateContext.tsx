@@ -3,6 +3,7 @@ import { ITask } from "../interfaces/task";
 import { getAllTasks } from "../service/taskService";
 import { formatTasks } from "../helper/formattedTasks";
 import { jwtDecode } from "jwt-decode";
+import { orderTasks } from "../helper/orderTasks";
 
 export interface TaskStateContextProps {
   tasksData: ITask[];
@@ -48,7 +49,9 @@ export const TaskStateProvider = ({ children }: { children: ReactNode }) => {
       const fetchTasks = await getAllTasks();
       if (fetchTasks && fetchTasks.length > 0) {
         const formattedTasks = await formatTasks(fetchTasks);
-        setTasksData(formattedTasks);
+        const orderedTasks = orderTasks(formattedTasks);
+
+        setTasksData(orderedTasks);
       }
     } catch (error) {
       console.error("Error fetching tasks:", error);
