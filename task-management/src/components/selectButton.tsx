@@ -5,13 +5,13 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { styled } from "@mui/material/styles";
 import { Control, Controller, useFormState } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { getTasksType } from "../service/taskService";
 
 interface SelectButtonProps {
   control: Control<any>;
   defaultValue?: string;
 }
-
-const types = ["Personal", "Work", "Diet"];
 
 const StyledFormControl = styled(FormControl)({
   width: "100%",
@@ -40,6 +40,18 @@ export default function SelectButton({
   defaultValue,
 }: SelectButtonProps) {
   const { errors } = useFormState({ control });
+  const [types, setTypes] = useState<string[]>([]);
+
+  const fetchTypes = async () => {
+    const typesData = await getTasksType();
+    if (typesData && typesData.length > 0) {
+      setTypes(typesData.map((type) => type.name));
+    }
+  };
+
+  useEffect(() => {
+    fetchTypes();
+  }, []);
 
   if (defaultValue) console.log(defaultValue);
 

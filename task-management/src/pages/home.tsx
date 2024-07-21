@@ -1,23 +1,24 @@
+import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
+import { BiPencil } from "react-icons/bi";
 import CardList from "../components/cardList";
 import ResponsiveDatePickers from "../components/datePicker";
 import { Divider } from "@mui/material";
-import { tasksData } from "../mockData/data";
-import { useEffect, useState } from "react";
 import { ITask } from "../interfaces/task";
 import { Dayjs } from "dayjs";
-import { formattedDate } from "../helper/formattedDate";
+import { formatFilterDate, formattedDate } from "../helper/formattedDate";
 import DialogComponent from "../components/dialog";
-import { BiPencil } from "react-icons/bi";
 import ResponsiveSidebar from "../components/responsiveSidebar";
 import Sidebar from "../components/sidebar";
+import { useTask } from "../hooks/taskHook";
 
 export default function Home() {
-  const [tasks, setTasks] = useState<ITask[]>([]);
+  const [filterTasks, setFilterTasks] = useState<ITask[]>([]);
   const [filterDate, setFilterDate] = useState<string>("");
   const [selectedFilter, setSelectedFilter] = useState<string>("Home");
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [filters, setFilters] = useState<string[]>([]);
+  const { tasksData } = useTask();
 
   useEffect(() => {
     applyFilters();
@@ -54,10 +55,14 @@ export default function Home() {
     }
 
     if (filterDate) {
-      filteredTasks = filteredTasks.filter((task) => task.date === filterDate);
+      const newFilterDate = formatFilterDate(filterDate);
+      tasksData.forEach((task) => console.log(task.data));
+      filteredTasks = filteredTasks.filter(
+        (task) => task.data === newFilterDate,
+      );
     }
 
-    setTasks(filteredTasks);
+    setFilterTasks(filteredTasks);
   }
 
   function handleDateChange(date: Dayjs | null) {
@@ -106,14 +111,20 @@ export default function Home() {
           </div>
         </div>
         <div className="no-scrollbar mt-9 flex max-h-[70vh] w-full flex-col items-center gap-3 overflow-auto">
-          {tasks.map((task) => (
+          {filterTasks.length === 0 && (
+            <p className="mt-16 text-lg font-semibold text-zinc-600">
+              No tasks found
+            </p>
+          )}
+
+          {filterTasks.map((task) => (
             <CardList
               key={task.id}
               id={task.id}
-              title={task.title}
+              name={task.name}
               startTime={task.startTime}
               endTime={task.endTime}
-              date={task.date}
+              data={task.data}
               type={task.type}
               status={task.status}
             />

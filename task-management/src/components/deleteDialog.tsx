@@ -5,11 +5,12 @@ import DialogContent from "@mui/material/DialogContent";
 
 import IconButton from "@mui/material/IconButton";
 import { MdClose } from "react-icons/md";
-import { getTaskById } from "../helper/getTask";
+import { deleteTask } from "../service/taskService";
+import { useTask } from "../hooks/taskHook";
 
 interface DeleteDialogComponentProps {
   onClose: () => void;
-  taskId: number;
+  taskId: string;
 }
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -34,15 +35,19 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 export default function DeleteDialogComponent(
   props: DeleteDialogComponentProps,
 ) {
+  const taskHook = useTask();
   const [open, setOpen] = useState(true);
+
   const handleClose = () => {
     setOpen(false);
     props.onClose();
   };
 
-  const handleDelete = (taskId: number) => {
-    console.log(getTaskById(taskId));
-
+  const handleDelete = async (taskId: string) => {
+    const result = await deleteTask(taskId);
+    if (result) {
+      taskHook.fetchTasksData();
+    }
     handleClose();
   };
 

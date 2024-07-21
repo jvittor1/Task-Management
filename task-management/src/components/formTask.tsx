@@ -6,10 +6,15 @@ import ResponsiveDatePickers from "./datePicker";
 import SelectButton from "./selectButton";
 import { forwardRef, useImperativeHandle } from "react";
 import { ITask } from "../interfaces/task";
+import { createTask, updateTask } from "../service/taskService";
+import { TaskDto } from "../dtos/taskDto";
+import { verifyTasks } from "../helper/verifyTasks";
+import { useTask } from "../hooks/taskHook";
 
 interface FormTaskComponentProps {
   onClose: () => void;
   taskData?: ITask;
+  isUpdate?: boolean;
 }
 
 const TaskSchema = z
@@ -34,19 +39,17 @@ const TaskSchema = z
       hour: "2-digit",
       minute: "2-digit",
     }),
-    date: data.date.toLocaleDateString([], {
+    date: new Date().toLocaleDateString("en-US", {
+      year: "numeric",
       month: "2-digit",
       day: "2-digit",
-      year: "2-digit",
     }),
   }));
 
 type CreateTaskFormData = z.infer<typeof TaskSchema>;
 
 const FormTaskComponent = forwardRef((props: FormTaskComponentProps, ref) => {
-  if (props.taskData) {
-    console.log(props.taskData);
-  }
+  const taskHook = useTask();
 
   const {
     register,
@@ -57,9 +60,40 @@ const FormTaskComponent = forwardRef((props: FormTaskComponentProps, ref) => {
     resolver: zodResolver(TaskSchema),
   });
 
-  const handleFormTaskSubmit = (data: CreateTaskFormData) => {
-    console.log(data);
-    props.onClose();
+  const handleFormTaskSubmit = async (data: CreateTaskFormData) => {
+    try {
+      const taskRegister: TaskDto = {
+        name: data.title,
+        startTime: data.start_time,
+        endTime: data.end_time,
+        data: data.date,
+        type: data.type,
+      };
+
+      if (props.isUpdate) {
+        if (verifyTasks(props.taskData as ITask, taskRegister)) {
+          props.onClose();
+          return;
+        }
+        const taskToUpdate: ITask = {
+          ...taskRegister,
+          id: props.taskData!.id,
+          status: props.taskData!.status,
+        };
+        const result = await updateTask(taskToUpdate);
+        if (result) {
+          taskHook.updateTasks();
+        }
+      } else {
+        const result = await createTask(taskRegister);
+        if (result) {
+          taskHook.updateTasks();
+        }
+      }
+      props.onClose();
+    } catch (error) {
+      console.error("Erro ao criar/atualizar tarefa:", error);
+    }
   };
 
   useImperativeHandle(ref, () => ({
@@ -81,7 +115,7 @@ const FormTaskComponent = forwardRef((props: FormTaskComponentProps, ref) => {
           {...register("title")}
           placeholder="Enter the task title"
           name="title"
-          defaultValue={props.taskData?.title}
+          defaultValue={props.taskData?.name}
         />
 
         {errors.title && (
@@ -118,7 +152,7 @@ const FormTaskComponent = forwardRef((props: FormTaskComponentProps, ref) => {
         <span className="text-zinc-100">Date</span>
 
         <ResponsiveDatePickers
-          defaultValue={props.taskData?.date}
+          defaultValue={props.taskData?.data}
           control={control}
         />
         {errors.date && (

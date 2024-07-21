@@ -66,9 +66,7 @@ export default function TimePickerComponent({
               return (
                 <StyledTimePicker
                   {...field}
-                  onOpen={() => {
-                    console.log(field.value);
-                  }}
+                  onOpen={() => {}}
                   onChange={(time) => {
                     const formattedTime = dayjs(time).toDate();
                     field.onChange(formattedTime);

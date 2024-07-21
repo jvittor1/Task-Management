@@ -7,6 +7,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { loginService } from "../service/userService";
 
 const LoginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -18,6 +19,7 @@ type CreateUserFormData = z.infer<typeof LoginSchema>;
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [errorMessageLogin, setErrorMessageLogin] = useState("");
   const {
     register,
     handleSubmit,
@@ -26,16 +28,25 @@ export default function Login() {
     resolver: zodResolver(LoginSchema),
   });
 
-  const handleLogin = (): Promise<string> => {
+  const handleLogin = async (data: CreateUserFormData) => {
+    console.log(data);
+
     setLoading(true);
     setIsDisabled(true);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("Login successful");
-        setLoading(false);
-        setIsDisabled(false);
-      }, 2000);
-    });
+    setErrorMessageLogin("");
+    try {
+      const result = await loginService(data);
+
+      if (result) {
+        setErrorMessageLogin(result);
+      }
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      setErrorMessageLogin("Erro desconhecido ao fazer login");
+    } finally {
+      setLoading(false);
+      setIsDisabled(false);
+    }
   };
 
   return (
@@ -77,6 +88,9 @@ export default function Login() {
             progress={loading}
             isDisabled={isDisabled}
           />
+          {errorMessageLogin && (
+            <span className="text-red-500">*{errorMessageLogin}</span>
+          )}
 
           <span>
             Don't have an account?{" "}

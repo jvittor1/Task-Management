@@ -20,7 +20,7 @@ const options = [
 const ITEM_HEIGHT = 48;
 
 interface IMenuOptionButton {
-  taskId: number;
+  taskId: string;
 }
 
 export default function MenuOptionButton(props: IMenuOptionButton) {

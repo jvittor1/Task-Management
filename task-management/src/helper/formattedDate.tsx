@@ -20,6 +20,19 @@ export function formattedStringToDate(time: string): Date {
 }
 
 export function formattedDateStringToDate(dateString: string): Date {
-  const [year, month, day] = dateString.split("-").map(Number);
+  const [month, day, year] = dateString.split("/").map(Number);
+
   return new Date(year, month - 1, day);
+}
+
+export function formatFilterDate(dateStr: string): string {
+  if (!dateStr || typeof dateStr !== "string" || dateStr.length !== 10) {
+    throw new Error(
+      "Invalid date. Date must have the following format: YYYY-MM-DD.",
+    );
+  }
+
+  const [year, month, day] = dateStr.split("-");
+
+  return `${month}/${day}/${year}`;
 }

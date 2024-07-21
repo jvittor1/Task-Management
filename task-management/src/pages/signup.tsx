@@ -6,6 +6,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { registerService } from "../service/userService";
 
 const SignupSchema = z
   .object({
@@ -33,6 +34,7 @@ type SignupFormData = z.infer<typeof SignupSchema>;
 export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [errorMessageRegister, setErrorMessageRegister] = useState("");
   const {
     register,
     handleSubmit,
@@ -41,16 +43,22 @@ export default function Signup() {
     resolver: zodResolver(SignupSchema),
   });
 
-  const createUser = (): Promise<string> => {
+  const createUser = async (data: SignupFormData) => {
     setLoading(true);
     setIsDisabled(true);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("Login successful");
-        setLoading(false);
-        setIsDisabled(false);
-      }, 2000);
-    });
+    setErrorMessageRegister("");
+    try {
+      const result = await registerService(data);
+
+      if (result) {
+        setErrorMessageRegister(result);
+      }
+    } catch (error) {
+      setErrorMessageRegister("Error to sign up");
+    } finally {
+      setLoading(false);
+      setIsDisabled(false);
+    }
   };
 
   return (
@@ -120,6 +128,10 @@ export default function Signup() {
               progress={loading}
               isDisabled={isDisabled}
             />
+
+            {errorMessageRegister && (
+              <span className="text-red-500">*{errorMessageRegister}</span>
+            )}
 
             <span className="text-zinc-100">
               Already have an account?{" "}

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,11 +6,13 @@ import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import { MdClose } from "react-icons/md";
 import FormTaskComponent from "./formTask";
-import { getTaskById } from "../helper/getTask";
+import { getTaskById } from "../service/taskService";
+import { ITask } from "../interfaces/task";
+import { formatTask } from "../helper/formattedTasks";
 
 interface DialogProps {
   onClose: () => void;
-  taskId?: number;
+  taskId?: string;
 }
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -34,11 +36,32 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     minWidth: 0,
   },
 }));
+
 export default function DialogComponent(props: DialogProps) {
-  let taskData;
-  if (props.taskId) {
-    taskData = getTaskById(props.taskId);
-  }
+  const [taskData, setTasksData] = useState<ITask | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (props.taskId) {
+        try {
+          const fetchTasks = await getTaskById(props.taskId);
+
+          if (fetchTasks) {
+            try {
+              const formattedTasks = await formatTask(fetchTasks);
+              setTasksData(formattedTasks);
+            } catch (formatError) {
+              console.error("Error formatting tasks:", formatError);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching tasks:", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [props.taskId]);
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -84,6 +107,7 @@ export default function DialogComponent(props: DialogProps) {
             ref={formRef}
             onClose={handleClose}
             taskData={taskData}
+            isUpdate={!!taskData}
           />
         )}
         {!taskData && <FormTaskComponent ref={formRef} onClose={handleClose} />}
