@@ -21,38 +21,51 @@ namespace task_management.Services.TaskService
 
             try
             {
-                TaskModel newTask = new TaskModel
+                
+                if(System.Enum.TryParse<TypeEnum>(taskRegisterDto.type, true, out var typeValue))
                 {
-                    Id = Guid.NewGuid(), 
-                    Name = taskRegisterDto.Name,
-                    Data = taskRegisterDto.Data,
-                    StartTime = taskRegisterDto.StartTime,
-                    EndTime = taskRegisterDto.EndTime,
-                    type = taskRegisterDto.type,
-                    Status = true, 
-                    UserId = taskRegisterDto.UserId 
-                };
+                    
 
-                if (!validDate(newTask.Data))
-                {
+                    TaskModel newTask = new TaskModel
+                    {
+                        Id = Guid.NewGuid(), 
+                        Name = taskRegisterDto.Name,
+                        Data = taskRegisterDto.Data,
+                        StartTime = taskRegisterDto.StartTime,
+                        EndTime = taskRegisterDto.EndTime,
+                        type = typeValue,
+                        Status = false, 
+                        UserId = taskRegisterDto.UserId 
+                    };
+
+                    if (!validDate(newTask.Data))
+                    {
+                        response.Status = false;
+                        response.Message = "Invalid date format. Please use dd/MM/yyyy.";
+                        return response;
+                    }
+
+                    if (!validTime(newTask.StartTime, newTask.EndTime))
+                    {
+                        response.Status = false;
+                        response.Message = "Invalid time format or end time is not greater than start time.";
+                        return response;
+                    }
+
+
+                    _context.Tasks.Add(newTask);
+                    await _context.SaveChangesAsync();
+                    response.Value = newTask.Id.ToString();
+                    response.Message = "Task created successfully.";
+                    response.Status = true;
+
+                }
+                else { 
+                    
                     response.Status = false;
-                    response.Message = "Invalid date format. Please use dd/MM/yyyy.";
-                    return response;
+                    response.Message = "Invalid task type";
                 }
 
-                if (!validTime(newTask.StartTime, newTask.EndTime))
-                {
-                    response.Status = false;
-                    response.Message = "Invalid time format or end time is not greater than start time.";
-                    return response;
-                }
-
-
-                _context.Tasks.Add(newTask);
-                await _context.SaveChangesAsync();
-                response.Value = newTask.Id.ToString();
-                response.Message = "Task created successfully.";
-                response.Status = true;
             }
             catch (Exception ex)
             {
@@ -187,6 +200,7 @@ namespace task_management.Services.TaskService
             try
             {
                 var newTask = await _context.Tasks.FirstOrDefaultAsync(taskDatabase => taskDatabase.Id == task.Id && taskDatabase.UserId == userId);
+                
 
                 if (newTask == null)
                 {
@@ -196,17 +210,19 @@ namespace task_management.Services.TaskService
                     return response;
                 }
 
+                if (System.Enum.TryParse<TypeEnum>(task.type, true, out var typeValue))
+
                 newTask.Name = task.Name;
                 newTask.Data = task.Data;
                 newTask.StartTime = task.StartTime;
                 newTask.EndTime = task.EndTime;
-                newTask.type = task.type;
+                newTask.type = typeValue;
                 newTask.Status = task.Status;
 
                 if (!validDate(newTask.Data))
                 {
                     response.Status = false;
-                    response.Message = "Invalid date format. Please use dd/MM/yyyy.";
+                    response.Message = "Invalid date format. Please use MM/dd/yyyy.";
                     return response;
                 }
 
@@ -237,7 +253,7 @@ namespace task_management.Services.TaskService
 
         public bool validDate(string date)
         {
-            string format = "dd/MM/yyyy";
+            string format = "MM/dd/yyyy";
             DateTime parsedDate;
             bool isValid = DateTime.TryParseExact(date, format, null, System.Globalization.DateTimeStyles.None, out parsedDate);
 
@@ -258,6 +274,8 @@ namespace task_management.Services.TaskService
 
 
         }
+
+           
 
     }
 }

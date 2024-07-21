@@ -8,7 +8,7 @@ namespace task_management.Dtos
         public string Data { get; set; }
         public string StartTime { get; set; }
         public string EndTime { get; set; }
-        public TypeEnum type { get; set; }
+        public string type { get; set; }
 
         public Guid UserId { get; set; }
     }
