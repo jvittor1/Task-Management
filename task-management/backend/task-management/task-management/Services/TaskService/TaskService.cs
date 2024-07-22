@@ -193,13 +193,13 @@ namespace task_management.Services.TaskService
             return response;
         }
 
-        public async Task<Response<TaskModel>> UpdateTask(TaskDto task, Guid userId)
+        public async Task<Response<TaskModel>> UpdateTask(Guid id, TaskDto task, Guid userId)
         {
             Response<TaskModel> response = new Response<TaskModel>();
 
             try
             {
-                var newTask = await _context.Tasks.FirstOrDefaultAsync(taskDatabase => taskDatabase.Id == task.Id && taskDatabase.UserId == userId);
+                var newTask = await _context.Tasks.FirstOrDefaultAsync(taskDatabase => taskDatabase.Id == id && taskDatabase.UserId == userId);
                 
 
                 if (newTask == null)

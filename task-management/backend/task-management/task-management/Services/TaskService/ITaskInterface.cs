@@ -9,7 +9,7 @@ namespace task_management.Services.TaskService
 
         Task<Response<List<TaskModel>>> GetAllTasks(Guid userId);
         Task<Response<TaskModel>> GetTaskById(Guid id, Guid userId);
-        Task<Response<TaskModel>> UpdateTask(TaskDto task, Guid userId);
+        Task<Response<TaskModel>> UpdateTask(Guid id, TaskDto task, Guid userId);
         Task<Response<string>> DeleteTask(Guid id, Guid userId);
         Task<Response<string>> CreateTask(TaskRegisterDto task);
         Response<List<TaskType>> GetAllTaskTypes();

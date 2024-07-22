@@ -48,8 +48,8 @@ namespace task_management.Controllers
         }
 
 
-        [HttpPost("updateTask")]
-         public async Task<ActionResult> UpdateTask(TaskDto task)
+        [HttpPut("updateTask/{id}")]
+         public async Task<ActionResult> UpdateTask(Guid id, [FromBody] TaskDto task)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
@@ -59,7 +59,7 @@ namespace task_management.Controllers
 
             var userId = Guid.Parse(userIdClaim.Value);
 
-            var response = await _taskInterface.UpdateTask(task, userId);
+            var response = await _taskInterface.UpdateTask(id, task, userId);
             if (!response.Status)
             {
                 return BadRequest(response.Message);
