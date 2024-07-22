@@ -2,6 +2,8 @@ import { jwtDecode } from "jwt-decode";
 import { TaskDto } from "../dtos/taskDto";
 import { FetchTasks, ITask, ITaskType } from "../interfaces/task";
 
+const urlTask = import.meta.env.VITE_TASK_ENDPOINTS_URL;
+
 function verifyToken(): boolean {
   const token = localStorage.getItem("token");
   const userId = window.location.pathname.split("/")[2];
@@ -18,7 +20,7 @@ function verifyToken(): boolean {
 }
 
 export async function getTasksType(): Promise<ITaskType[] | null> {
-  const url = "https://localhost:7298/api/Task/getAllTypes";
+  const url = `${urlTask}/getTasksType`;
 
   if (!verifyToken()) {
     window.location.href = "/login";
@@ -45,7 +47,7 @@ export async function getTasksType(): Promise<ITaskType[] | null> {
 }
 
 export async function createTask(task: TaskDto): Promise<boolean> {
-  const url = "https://localhost:7298/api/Task/createTask";
+  const url = `${urlTask}/createTask`;
   const userId = window.location.pathname.split("/")[2];
 
   const data = { ...task, userId: userId };
@@ -77,7 +79,7 @@ export async function createTask(task: TaskDto): Promise<boolean> {
 }
 
 export async function updateTask(task: ITask): Promise<boolean> {
-  const url = "https://localhost:7298/api/Task/updateTask";
+  const url = `${urlTask}/updateTask/${task.id}`;
 
   const data = { ...task };
 
@@ -89,7 +91,7 @@ export async function updateTask(task: ITask): Promise<boolean> {
 
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -104,15 +106,13 @@ export async function updateTask(task: ITask): Promise<boolean> {
 
     return true;
   } catch (error) {
-    console.log("deu ruim");
-
     console.error(error);
     return false;
   }
 }
 
 export async function deleteTask(taskId: string): Promise<boolean> {
-  const url = `https://localhost:7298/api/Task/deleteTask/${taskId}`;
+  const url = `${urlTask}/deleteTask/${taskId}`;
   if (!verifyToken()) {
     window.location.href = "/login";
   }
@@ -139,7 +139,7 @@ export async function deleteTask(taskId: string): Promise<boolean> {
 }
 
 export async function getAllTasks(): Promise<FetchTasks[] | null> {
-  const url = "https://localhost:7298/api/Task/getAllTasks";
+  const url = `${urlTask}/getAllTasks`;
 
   if (!verifyToken()) {
     window.location.href = "/login";
@@ -161,7 +161,6 @@ export async function getAllTasks(): Promise<FetchTasks[] | null> {
     }
 
     const data = await response.json();
-    console.log(data.value);
 
     return data.value;
   } catch (error) {
@@ -171,7 +170,7 @@ export async function getAllTasks(): Promise<FetchTasks[] | null> {
 }
 
 export async function getTaskById(taskId: string): Promise<FetchTasks | null> {
-  const url = `https://localhost:7298/api/Task/getTaskById/${taskId}`;
+  const url = `${urlTask}/getTaskById/${taskId}`;
 
   if (!verifyToken()) {
     window.location.href = "/login";

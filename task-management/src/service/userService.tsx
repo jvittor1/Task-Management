@@ -2,11 +2,15 @@ import { jwtDecode } from "jwt-decode";
 import { ILogin } from "../interfaces/login";
 import { IRegister } from "../interfaces/register";
 
+const userUrl = import.meta.env.VITE_USER_ENDPOINTS_URL;
+
 export async function loginService({
   email,
   password,
 }: ILogin): Promise<string | null> {
-  const url = "https://localhost:7298/api/User/login";
+  const url = `${userUrl}/login`;
+  console.log(url);
+
   const data = {
     email: email,
     password: password,
@@ -51,7 +55,7 @@ export async function registerService({
   password,
   confirmPassword,
 }: IRegister): Promise<string | null> {
-  const url = "https://localhost:7298/api/User/register";
+  const url = `${userUrl}/register`;
   const data = {
     name: name,
     email: email,
